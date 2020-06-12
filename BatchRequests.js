@@ -26,6 +26,9 @@ function EDo(object) {
 
     function BatchRequest(p_) {
       var bP, batchPath;
+      if (!p_.hasOwnProperty("requests")) {
+        throw new Error("'requests' property was not found in object.");
+      }
       this.p = p_.requests;
       this.url = "https://www.googleapis.com/batch";
       if (p_.batchPath) {

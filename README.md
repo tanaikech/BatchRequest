@@ -182,4 +182,8 @@ If you have any questions and commissions for me, feel free to tell me.
 
   1. New method of [`EDo()`](#edo) was added. This method is the enhanced `Do()` method. When this method is used, the result values from the batch requests are parsed. And also, the number of requests more than 100 can be used. In this case, the split of the number of requests is processed for the limitation of 100.
 
+- v1.1.1 (June 12, 2020)
+
+  1. Error handling for the input object was added.
+
 [TOP](#top)
