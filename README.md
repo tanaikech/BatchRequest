@@ -15,6 +15,11 @@
 
 When users use Google's APIs, one quota is used for one API call. When the batch request is used, several APIs can be called by one quota, although there are some limitations in the batch request. For example, in GAS, Drive API can be used be `DriveApp`. In this case, the quota is not used for using Drive API. (When `Drive` of Advanced Google Services is used, the quota is used.) But this is Drive API v2. If users want to use Drive API v3, it is required to directly request each endpoint of Drive API v3. The batch request is much useful for this situation. However, it is a bit difficult for users to use the batch request. Because the batch request is requested by `multipart/mixed`. I thought that the script may become a bit complicated, because of the request of `multipart/mixed` using `UrlFetchApp`. And although I had been looking for the libraries for the batch request, I couldn't find them. So I created this.
 
+## Sample scripts
+
+- [Managing A Lot Of Google Calendar Events using Batch Requests with Google Apps Script](https://github.com/tanaikech/Managing-A-Lot-Of-Google-Calendar-Events-using-Batch-Requests-with-Google-Apps-Script)
+- [Batch Requests for Drive API using Google Apps Script](https://github.com/tanaikech/Batch-Requests-for-Drive-API-using-Google-Apps-Script)
+
 # Library's project key
 
 ```
@@ -185,5 +190,9 @@ If you have any questions and commissions for me, feel free to tell me.
 - v1.1.1 (June 12, 2020)
 
   1. Error handling for the input object was added.
+
+- v1.1.2 (June 12, 2020)
+
+  1. Removed a bug that when the returned value is empty, an error occurred.
 
 [TOP](#top)

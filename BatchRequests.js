@@ -105,10 +105,14 @@ function EDo(object) {
     };
 
     parser = function(d_) {
-      var temp;
+      var regex, temp;
       temp = d_.split("--batch");
+      regex = /{[\S\s]+}/g;
       return temp.slice(1, temp.length - 1).map(function(e) {
-        return JSON.parse(e.match(/{[\S\s]+}/g)[0]);
+        if (regex.test(e)) {
+          return JSON.parse(e.match(regex)[0]);
+        }
+        return e;
       });
     };
 
