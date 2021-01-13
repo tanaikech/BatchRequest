@@ -41,7 +41,7 @@ function EDo(object) {
         }
         this.url += batchPath;
       }
-      this.at = ScriptApp.getOAuthToken();
+      this.at = p_.accessToken || ScriptApp.getOAuthToken();
       this.lb = "\r\n";
       this.boundary = "xxxxxxxxxx";
       this.useFetchAll = "useFetchAll" in p_ ? p_.useFetchAll : false;

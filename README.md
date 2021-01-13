@@ -83,6 +83,7 @@ var requests = {
       requestBody: { name: "sample2" },
     },
   ],
+  accessToken: "###", // If you want to use the specific access token, please use this.
 };
 var result = BatchRequest.Do(requests); // Using this library
 Logger.log(result);
@@ -90,7 +91,9 @@ Logger.log(result);
 
 - [`batchPath`](https://developers.google.com/drive/v3/web/batch#details) will be introduced in the near future. But you have already been able to use this. `batchPath` can be retrieved by [Discovery](https://developers.google.com/discovery/v1/reference/apis).
 
-- If `accessToken` is used in the object of requests, the `accessToken` is used for the individual request in the batch request. If `accessToken` is not used in the requests, this library uses `ScriptApp.getOAuthToken()` for the whole batch request.
+- If `accessToken` is used in the object of requests (At above sample, it's `requests.requests[0].accessToken`.), the `accessToken` is used for the individual request in the batch request. If `accessToken` is not used in the requests, this library uses `ScriptApp.getOAuthToken()` for the whole batch request.
+
+- If `accessToken` is used in the object (At above sample, it's `requests.accessToken`.), you can use the specific access token. For example, in this case, you can use the access token retrieved by the service account.
 
 <a name="edo"></a>
 
@@ -118,6 +121,7 @@ var requests = {
       requestBody: { name: "sample2" },
     },
   ],
+  accessToken: "###", // If you want to use the specific access token, please use this.
 };
 var result = BatchRequest.EDo(requests); // Using this library
 Logger.log(result);
@@ -127,7 +131,9 @@ Logger.log(result);
 
 * [`batchPath`](https://developers.google.com/drive/v3/web/batch#details) will be introduced in the near future. But you have already been able to use this. `batchPath` can be retrieved by [Discovery](https://developers.google.com/discovery/v1/reference/apis).
 
-* If `accessToken` is used in the object of requests, the `accessToken` is used for the individual request in the batch request. If `accessToken` is not used in the requests, this library uses `ScriptApp.getOAuthToken()` for the whole batch request.
+* If `accessToken` is used in the object of requests (At above sample, it's `requests.requests[0].accessToken`.), the `accessToken` is used for the individual request in the batch request. If `accessToken` is not used in the requests, this library uses `ScriptApp.getOAuthToken()` for the whole batch request.
+
+- If `accessToken` is used in the object (At above sample, it's `requests.accessToken`.), you can use the specific access token. For example, in this case, you can use the access token retrieved by the service account.
 
 * `requests`
   - [`batchPath`](https://developers.google.com/drive/v3/web/batch#details): `batchPath` can be retrieved by [Discovery](https://developers.google.com/discovery/v1/reference/apis).
@@ -194,5 +200,9 @@ If you have any questions and commissions for me, feel free to tell me.
 - v1.1.2 (June 12, 2020)
 
   1. Removed a bug that when the returned value is empty, an error occurred.
+
+- v1.1.3 (January 13, 2021)
+
+  1. In order to give the access token from outside, the access token got to be able to be included in the object. By this, for example, you can use the access token retrieved by the service account.
 
 [TOP](#top)
