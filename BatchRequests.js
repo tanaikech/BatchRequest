@@ -29,7 +29,7 @@ function EDo(object) {
       if (!p_.hasOwnProperty("requests")) {
         throw new Error("'requests' property was not found in object.");
       }
-      this.p = p_.requests.map(r=> ({...r}));
+      this.p = p_.requests.slice();
       this.url = "https://www.googleapis.com/batch";
       if (p_.batchPath) {
         bP = p_.batchPath.trim();
