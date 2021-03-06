@@ -205,4 +205,8 @@ If you have any questions and commissions for me, feel free to tell me.
 
   1. In order to give the access token from outside, the access token got to be able to be included in the object. By this, for example, you can use the access token retrieved by the service account.
 
+- v1.1.4 (March 13, 2021)
+
+  1. By [a pull request](https://github.com/tanaikech/BatchRequest/pull/2), the inputted request is used as the call by value instead of the call by reference. It's like `this.p = p_.requests.slice();`.
+
 [TOP](#top)
