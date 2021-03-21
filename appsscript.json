@@ -1,0 +1,12 @@
+{
+  "timeZone": "Asia/Tokyo",
+  "dependencies": {},
+  "exceptionLogging": "STACKDRIVER",
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/drive",
+    "https://www.googleapis.com/auth/drive.scripts",
+    "https://www.googleapis.com/auth/script.external_request",
+    "https://mail.google.com/",
+    "https://www.googleapis.com/auth/calendar"
+  ]
+}
