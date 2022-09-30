@@ -56,6 +56,8 @@ About the install of scopes using at this library, users are not required to ins
 | [Do(object)](#do)   | This is a simple method for the batch request. The maximum number of requests is 100. The raw values from the batch request are returned.                                                                                                                                        |
 | [EDo(object)](#edo) | This method is the enhanced `Do()` method. When this method is used, the result values from the batch requests are parsed. And also, the number of requests more than 100 can be used. In this case, the split of the number of requests is processed for the limitation of 100. |
 
+| [getBatchPath(name, version)](#getbatchpath)| Get batch path for using batch requests. On August 12, 2020, in order to use batch requests, the batch path is required to be used to the endpoint of the batch requests. This method can simply retrieve the batch path from the name of Google API. And, the retrieved batch path can be used in [Do(object)](#do) and [EDo(object)](#edo) methods. |
+
 # Usage
 
 <a name="do"></a>
@@ -142,6 +144,25 @@ Logger.log(result);
   - `requestBody`: Request body of the API you want to use. This library for Google APIs. So in this case, the request body is sent as JSON.
   - `useFetchAll`: When "useFetchAll" is true, the request is run with fetchAll method. The default is false. For example, when 200 batch requests are used, when `useFetchAll: true` is used, 2 requests which have 100 batch requests are run with the asynchronous process using fetchAll method. [Ref](https://developers.google.com/apps-script/reference/url-fetch/url-fetch-app#fetchallrequests) When `useFetchAll: false` is used, 2 requests which have 100 batch requests are run with the synchronous process using fetch method. [Ref](https://developers.google.com/apps-script/reference/url-fetch/url-fetch-app#fetchurl,-params)
 
+<a name="getbatchpath"></a>
+
+## Method: getBatchPath(name, version)
+
+Get batch path for using batch requests. On August 12, 2020, in order to use batch requests, the batch path is required to be used to the endpoint of the batch requests. This method can simply retrieve the batch path from the name of Google API. And, the retrieved batch path can be used in [Do(object)](#do) and [EDo(object)](#edo) methods.
+
+The sample script is as follows.
+
+```javascript
+var res = BatchRequest.getBatchPath("drive");
+Logger.log(res); // <--- batch/drive/v3
+```
+
+- There are 2 arguments in `getBatchPath(arg1, arg2)`. `arg1` and `arg2` are the name of Google API and the version of Google API you want to use.
+
+  - For example, when you want to use Drive API v2, please set `BatchRequest.getBatchPath("drive", "v2")`. When you want to use the latest version of Drive API, please use `BatchRequest.getBatchPath("drive", "v3")` or `BatchRequest.getBatchPath("drive")`. When the 2nd argument is not used, the latest version is used.
+
+- In this sample, `batch/drive/v3` is returned. For example, when `var res = BatchRequest.getBatchPath("calendar")` is used, `batch/calendar/v3`.
+
 # Limitations for batch request
 
 There are some limitations for the batch request.
@@ -208,5 +229,9 @@ If you have any questions and commissions for me, feel free to tell me.
 - v1.1.4 (March 13, 2021)
 
   1. By [a pull request](https://github.com/tanaikech/BatchRequest/pull/2), the inputted request is used as the call by value instead of the call by reference. It's like `this.p = p_.requests.slice();`.
+
+- v1.2.0 (September 30, 2022)
+
+  1. A new method of [getBatchPath(name, version)](#getbatchpath) was added. On August 12, 2020, in order to use batch requests, the batch path is required to be used to the endpoint of the batch requests. This method can simply retrieve the batch path from the name of Google API. And, the retrieved batch path can be used in [Do(object)](#do) and [EDo(object)](#edo) methods.
 
 [TOP](#top)
