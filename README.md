@@ -91,6 +91,7 @@ Logger.log(result);
 ```
 
 - [`batchPath`](https://developers.google.com/drive/v3/web/batch#details) will be introduced in the near future. But you have already been able to use this. `batchPath` can be retrieved by [Discovery](https://developers.google.com/discovery/v1/reference/apis).
+	- This `batchPath` can be retrieved using [getBatchPath(name, version)](#getbatchpath).
 
 - If `accessToken` is used in the object of requests (At above sample, it's `requests.requests[0].accessToken`.), the `accessToken` is used for the individual request in the batch request. If `accessToken` is not used in the requests, this library uses `ScriptApp.getOAuthToken()` for the whole batch request.
 
@@ -131,6 +132,7 @@ Logger.log(result);
 - In this method, the result values from the batch requests are parsed, and you can retrieve the result values as an array object.
 
 * [`batchPath`](https://developers.google.com/drive/v3/web/batch#details) will be introduced in the near future. But you have already been able to use this. `batchPath` can be retrieved by [Discovery](https://developers.google.com/discovery/v1/reference/apis).
+	- This `batchPath` can be retrieved using [getBatchPath(name, version)](#getbatchpath).
 
 * If `accessToken` is used in the object of requests (At above sample, it's `requests.requests[0].accessToken`.), the `accessToken` is used for the individual request in the batch request. If `accessToken` is not used in the requests, this library uses `ScriptApp.getOAuthToken()` for the whole batch request.
 
@@ -147,7 +149,7 @@ Logger.log(result);
 
 ## Method: getBatchPath(name, version)
 
-Get batch path for using batch requests. On August 12, 2020, in order to use batch requests, the batch path is required to be used to the endpoint of the batch requests. This method can simply retrieve the batch path from the name of Google API. And, the retrieved batch path can be used in [Do(object)](#do) and [EDo(object)](#edo) methods.
+After August 12, 2020, in order to use batch requests, the batch path is required to be used to the endpoint of the batch requests. And, the batch path is sometimes updated. So, when a constant batch path has been continued to be used, this might lead to the reason for an error. In this method, the batch path is retrieved from Discovery API. By this, the latest batch path can be always simply obtained from the name of Google API. And, the retrieved batch path can be used in [Do(object)](#do) and [EDo(object)](#edo) methods.
 
 The sample script is as follows.
 
