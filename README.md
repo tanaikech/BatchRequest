@@ -91,7 +91,8 @@ Logger.log(result);
 ```
 
 - [`batchPath`](https://developers.google.com/drive/v3/web/batch#details) will be introduced in the near future. But you have already been able to use this. `batchPath` can be retrieved by [Discovery](https://developers.google.com/discovery/v1/reference/apis).
-	- This `batchPath` can be retrieved using [getBatchPath(name, version)](#getbatchpath).
+
+  - This `batchPath` can be retrieved using [getBatchPath(name, version)](#getbatchpath).
 
 - If `accessToken` is used in the object of requests (At above sample, it's `requests.requests[0].accessToken`.), the `accessToken` is used for the individual request in the batch request. If `accessToken` is not used in the requests, this library uses `ScriptApp.getOAuthToken()` for the whole batch request.
 
@@ -124,6 +125,7 @@ var requests = {
     },
   ],
   accessToken: "###", // If you want to use the specific access token, please use this.
+  // exportDataAsBlob: true, // When this option is used, the returned value from the batch request can be retrieved as Blob.
 };
 var result = BatchRequest.EDo(requests); // Using this library
 Logger.log(result);
@@ -132,7 +134,8 @@ Logger.log(result);
 - In this method, the result values from the batch requests are parsed, and you can retrieve the result values as an array object.
 
 * [`batchPath`](https://developers.google.com/drive/v3/web/batch#details) will be introduced in the near future. But you have already been able to use this. `batchPath` can be retrieved by [Discovery](https://developers.google.com/discovery/v1/reference/apis).
-	- This `batchPath` can be retrieved using [getBatchPath(name, version)](#getbatchpath).
+
+  - This `batchPath` can be retrieved using [getBatchPath(name, version)](#getbatchpath).
 
 * If `accessToken` is used in the object of requests (At above sample, it's `requests.requests[0].accessToken`.), the `accessToken` is used for the individual request in the batch request. If `accessToken` is not used in the requests, this library uses `ScriptApp.getOAuthToken()` for the whole batch request.
 
@@ -144,6 +147,7 @@ Logger.log(result);
   - `endpoint`: Endpoint of the API you want to use.
   - `requestBody`: Request body of the API you want to use. This library for Google APIs. So in this case, the request body is sent as JSON.
   - `useFetchAll`: When "useFetchAll" is true, the request is run with fetchAll method. The default is false. For example, when 200 batch requests are used, when `useFetchAll: true` is used, 2 requests which have 100 batch requests are run with the asynchronous process using fetchAll method. [Ref](https://developers.google.com/apps-script/reference/url-fetch/url-fetch-app#fetchallrequests) When `useFetchAll: false` is used, 2 requests which have 100 batch requests are run with the synchronous process using fetch method. [Ref](https://developers.google.com/apps-script/reference/url-fetch/url-fetch-app#fetchurl,-params)
+  - `exportDataAsBlob`: When this option is used, the returned value from the batch request can be retrieved as Blob. By this, for example, when you export Google Spreadsheet as PDF data using the batch requests, the PDF data can be retrieved as Blob.
 
 <a name="getbatchpath"></a>
 
@@ -185,7 +189,30 @@ There are some limitations for the batch request.
 - About the limitation of number of request for one batch request
   - The batch request is worked by the asynchronous processing. Also [the fetchAll method is worked by the asynchronous processing.](https://gist.github.com/tanaikech/c0f383034045ab63c19604139ecb0728) I think that by using both, the number of requests for one batch request can be increased.
 - [RunAll](https://github.com/tanaikech/RunAll)
+
   - This is a library for running the concurrent processing using only native Google Apps Script (GAS).
+
+- Sample script using `exportDataAsBlob` is as follows. In this sample, the Spreadsheet and Document files are exported as PDF format using the batch requests. The exported PDF data is created as a PDF file to the root folder. When I answered [this thread on Stackoverflow](https://stackoverflow.com/q/75661391), when this option is added to this librar, I thought that it might be useful for users.
+
+  ```javascript
+  const fileIds = ["###SpreadsheetID1###", "###DocumentID1###", , , ,];
+  const requests = fileIds.map((id) => ({
+    method: "GET",
+    endpoint: `https://www.googleapis.com/drive/v3/files/${id}/export?mimeType=application/pdf`,
+  }));
+  const reqs = {
+    batchPath: "batch/drive/v3",
+    requests,
+    exportDataAsBlob: true,
+  };
+  const blobs = BatchRequestTest.EDo(reqs); // Using this library
+  blobs.forEach((b) => {
+    if (b) {
+      console.log({ filename: b.getName(), fileSize: b.getBytes().length });
+      DriveApp.createFile(b);
+    }
+  });
+  ```
 
 ---
 
@@ -234,5 +261,9 @@ If you have any questions and commissions for me, feel free to tell me.
 - v1.2.0 (September 30, 2022)
 
   1. A new method of [getBatchPath(name, version)](#getbatchpath) was added. On August 12, 2020, in order to use batch requests, the batch path is required to be used to the endpoint of the batch requests. This method can simply retrieve the batch path from the name of Google API. And, the retrieved batch path can be used in [Do(object)](#do) and [EDo(object)](#edo) methods.
+
+- v1.2.1 (March 8, 2023)
+
+  1. An option of `exportDataAsBlob` was added to the request object to the method of `EDo()`. [Ref](https://github.com/tanaikech/BatchRequest#method-edo) When this option is used, the response values from the batch requests are returned as Blob. By this, for example, when you export Google Spreadsheet as PDF data using the batch requests, the PDF data can be retrieved as Blob.
 
 [TOP](#top)

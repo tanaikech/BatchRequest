@@ -5,7 +5,7 @@
  * @return {Object} Return Object
  */
 function Do(object) {
-  return new BatchRequest(object).Do();
+    return new BatchRequest(object).Do();
 }
 
 /**
@@ -14,7 +14,7 @@ function Do(object) {
  * @return {Object} Return Object
  */
 function EDo(object) {
-  return new BatchRequest(object).EDo();
+    return new BatchRequest(object).EDo();
 }
 
 /**
@@ -24,12 +24,13 @@ function EDo(object) {
  * @return {Object} Return Object
  */
 function getBatchPath(name, version) {
-  return new BatchRequest("getBatchPath").getBatchPath(name, version);
+    return new BatchRequest("getBatchPath").getBatchPath(name, version);
 }
-(function (r) {
+;
+(function(r) {
   var BatchRequest;
-  BatchRequest = (function () {
-    var createRequest, parser;
+  BatchRequest = (function() {
+    var createRequest, parser, parserAsBinary, splitByteArrayBySearchData;
 
     BatchRequest.name = "BatchRequest";
 
@@ -55,10 +56,11 @@ function getBatchPath(name, version) {
         this.lb = "\r\n";
         this.boundary = "xxxxxxxxxx";
         this.useFetchAll = "useFetchAll" in p_ ? p_.useFetchAll : false;
+        this.exportDataAsBlob = "exportDataAsBlob" in p_ ? p_.exportDataAsBlob : false;
       }
     }
 
-    BatchRequest.prototype.Do = function () {
+    BatchRequest.prototype.Do = function() {
       var e, params, res;
       try {
         params = createRequest.call(this, this.p);
@@ -70,29 +72,25 @@ function getBatchPath(name, version) {
       return res;
     };
 
-    BatchRequest.prototype.EDo = function () {
-      var e, i, j, k, limit, obj, params, ref, ref1, reqs, res, split;
+    BatchRequest.prototype.EDo = function() {
+      var e, i, k, l, limit, obj, params, ref, ref1, reqs, res, split;
       try {
         if (this.useFetchAll) {
           limit = 100;
           split = Math.ceil(this.p.length / limit);
           reqs = [];
-          for (
-            i = j = 0, ref = split;
-            0 <= ref ? j < ref : j > ref;
-            i = 0 <= ref ? ++j : --j
-          ) {
+          for (i = k = 0, ref = split; 0 <= ref ? k < ref : k > ref; i = 0 <= ref ? ++k : --k) {
             params = createRequest.call(this, this.p.splice(0, limit));
             params.url = this.url;
             reqs.push(params);
           }
           r = UrlFetchApp.fetchAll(reqs);
-          res = r.reduce(function (ar, e) {
+          res = r.reduce(function(ar, e) {
             var obj;
             if (e.getResponseCode() !== 200) {
               ar.push(e.getContentText());
             } else {
-              obj = parser.call(this, e.getContentText());
+              obj = this.exportDataAsBlob ? parserAsBinary.call(this, e) : parser.call(this, e.getContentText());
               ar = ar.concat(obj);
             }
             return ar;
@@ -101,17 +99,13 @@ function getBatchPath(name, version) {
           limit = 100;
           split = Math.ceil(this.p.length / limit);
           res = [];
-          for (
-            i = k = 0, ref1 = split;
-            0 <= ref1 ? k < ref1 : k > ref1;
-            i = 0 <= ref1 ? ++k : --k
-          ) {
+          for (i = l = 0, ref1 = split; 0 <= ref1 ? l < ref1 : l > ref1; i = 0 <= ref1 ? ++l : --l) {
             params = createRequest.call(this, this.p.splice(0, limit));
             r = UrlFetchApp.fetch(this.url, params);
             if (r.getResponseCode() !== 200) {
               res.push(r.getContentText());
             } else {
-              obj = parser.call(this, r.getContentText());
+              obj = this.exportDataAsBlob ? parserAsBinary.call(this, r) : parser.call(this, r.getContentText());
               res = res.concat(obj);
             }
           }
@@ -123,19 +117,15 @@ function getBatchPath(name, version) {
       return res;
     };
 
-    BatchRequest.prototype.getBatchPath = function (name, version) {
+    BatchRequest.prototype.getBatchPath = function(name, version) {
       var batchPath, discoveryRestUrl, obj1, obj2, res1, res2, url;
       version = version === void 0 ? "" : version;
       if (!name) {
         throw new Error("Please set API name you want to search.");
       }
-      url =
-        "https://www.googleapis.com/discovery/v1/apis?preferred=" +
-        (version ? "false" : "true") +
-        "&name=" +
-        encodeURIComponent(name.toLowerCase());
+      url = "https://www.googleapis.com/discovery/v1/apis?preferred=" + (version ? "false" : "true") + "&name=" + encodeURIComponent(name.toLowerCase());
       res1 = UrlFetchApp.fetch(url, {
-        muteHttpExceptions: true,
+        muteHttpExceptions: true
       });
       if (res1.getResponseCode() !== 200) {
         throw new Error("Batch path cannot be found.");
@@ -144,18 +134,14 @@ function getBatchPath(name, version) {
       if (!obj1.items) {
         throw new Error("Batch path cannot be found.");
       }
-      discoveryRestUrl = (
-        (version.toString() === ""
-          ? obj1.items[0]
-          : obj1.items.filter(function (e) {
-              return e.version === version;
-            })[0]) || {}
-      ).discoveryRestUrl;
+      discoveryRestUrl = ((version.toString() === "" ? obj1.items[0] : (obj1.items.filter(function(e) {
+        return e.version === version;
+      }))[0]) || {}).discoveryRestUrl;
       if (!discoveryRestUrl) {
         throw new Error("Batch path cannot be found.");
       }
       res2 = UrlFetchApp.fetch(discoveryRestUrl, {
-        muteHttpExceptions: true,
+        muteHttpExceptions: true
       });
       if (res2.getResponseCode() !== 200) {
         throw new Error("Batch path cannot be found.");
@@ -165,11 +151,14 @@ function getBatchPath(name, version) {
       return batchPath;
     };
 
-    parser = function (d_) {
+    parser = function(d_) {
       var regex, temp;
       temp = d_.split("--batch");
       regex = /{[\S\s]+}/g;
-      return temp.slice(1, temp.length - 1).map(function (e) {
+      if (!regex.test(d_)) {
+        tthrow(new Error("In this response data, JSON data is not returned. So, please try to use the option 'exportDataAsBlob: true' in the request object."));
+      }
+      return temp.slice(1, temp.length - 1).map(function(e) {
         if (regex.test(e)) {
           return JSON.parse(e.match(regex)[0]);
         }
@@ -177,40 +166,75 @@ function getBatchPath(name, version) {
       });
     };
 
-    createRequest = function (d_) {
+    splitByteArrayBySearchData = function(baseData_, searchData_) {
+      var bLen, idx, res, search;
+      search = searchData_.join("");
+      bLen = searchData_.length;
+      res = [];
+      idx = 0;
+      while (idx !== -1) {
+        idx = baseData_.findIndex(function(_, i, a) {
+          return (Array(bLen).fill(null).map(function(_, j) {
+            return a[j + i];
+          })).join("") === search;
+        });
+        if (idx !== -1) {
+          res.push(baseData_.splice(0, idx));
+          baseData_.splice(0, bLen);
+        } else {
+          res.push(baseData_.splice(0));
+        }
+      }
+      return res;
+    };
+
+    parserAsBinary = function(d_) {
+      var baseData, blobs, check, res1, search, searchData;
+      check = d_.getContentText().match(/--batch.*/);
+      if (!check) {
+        throw new Error("Valid response value is not returned.");
+      }
+      search = check[0];
+      baseData = d_.getContent();
+      searchData = Utilities.newBlob(search).getBytes();
+      res1 = splitByteArrayBySearchData.call(this, baseData, searchData);
+      res1.shift();
+      res1.pop();
+      blobs = res1.map(function(e, i) {
+        var data, dataSize, metadata, rrr;
+        rrr = splitByteArrayBySearchData.call(this, e, [13, 10, 13, 10]);
+        data = rrr.pop();
+        metadata = Utilities.newBlob(rrr.flat()).getDataAsString();
+        dataSize = Number(metadata.match(/Content-Length:(.*)/)[1]);
+        return Utilities.newBlob(data.splice(0, dataSize)).setName("blob" + (i + 1));
+      });
+      return blobs;
+    };
+
+    createRequest = function(d_) {
       var contentId, data, e, params;
       try {
         contentId = 0;
         data = "--" + this.boundary + this.lb;
-        d_.forEach(
-          (function (_this) {
-            return function (e) {
-              data += "Content-Type: application/http" + _this.lb;
-              data += "Content-ID: " + ++contentId + _this.lb + _this.lb;
-              data += e.method + " " + e.endpoint + _this.lb;
-              data += e.accessToken
-                ? "Authorization: Bearer " + e.accessToken + _this.lb
-                : "";
-              data += e.requestBody
-                ? "Content-Type: application/json; charset=utf-8" +
-                  _this.lb +
-                  _this.lb
-                : _this.lb;
-              data += e.requestBody
-                ? JSON.stringify(e.requestBody) + _this.lb
-                : "";
-              return (data += "--" + _this.boundary + _this.lb);
-            };
-          })(this)
-        );
+        d_.forEach((function(_this) {
+          return function(e) {
+            data += "Content-Type: application/http" + _this.lb;
+            data += "Content-ID: " + ++contentId + _this.lb + _this.lb;
+            data += e.method + " " + e.endpoint + _this.lb;
+            data += e.accessToken ? "Authorization: Bearer " + e.accessToken + _this.lb : "";
+            data += e.requestBody ? "Content-Type: application/json; charset=utf-8" + _this.lb + _this.lb : _this.lb;
+            data += e.requestBody ? JSON.stringify(e.requestBody) + _this.lb : "";
+            return data += "--" + _this.boundary + _this.lb;
+          };
+        })(this));
         params = {
           muteHttpExceptions: true,
           method: "post",
           contentType: "multipart/mixed; boundary=" + this.boundary,
           payload: Utilities.newBlob(data).getBytes(),
           headers: {
-            Authorization: "Bearer " + this.at,
-          },
+            Authorization: 'Bearer ' + this.at
+          }
         };
       } catch (error) {
         e = error;
@@ -220,6 +244,7 @@ function getBatchPath(name, version) {
     };
 
     return BatchRequest;
+
   })();
-  return (r.BatchRequest = BatchRequest);
+  return r.BatchRequest = BatchRequest;
 })(this);
