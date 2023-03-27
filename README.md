@@ -266,4 +266,8 @@ If you have any questions and commissions for me, feel free to tell me.
 
   1. An option of `exportDataAsBlob` was added to the request object to the method of `EDo()`. [Ref](https://github.com/tanaikech/BatchRequest#method-edo) When this option is used, the response values from the batch requests are returned as Blob. By this, for example, when you export Google Spreadsheet as PDF data using the batch requests, the PDF data can be retrieved as Blob.
 
+- v1.2.2 (March 27, 2023)
+
+  1. A bug was removed.
+
 [TOP](#top)

@@ -156,7 +156,9 @@ function getBatchPath(name, version) {
       temp = d_.split("--batch");
       regex = /{[\S\s]+}/g;
       if (!regex.test(d_)) {
-        tthrow(new Error("In this response data, JSON data is not returned. So, please try to use the option 'exportDataAsBlob: true' in the request object."));
+        console.log("# In this response data, JSON data is not returned. So, please try to use the option 'exportDataAsBlob: true' in the request object.");
+        console.log("# Raw response data is as follows.");
+        console.log(d_);
       }
       return temp.slice(1, temp.length - 1).map(function(e) {
         if (regex.test(e)) {
