@@ -270,4 +270,8 @@ If you have any questions and commissions for me, feel free to tell me.
 
   1. A bug was removed.
 
+- v1.2.3 (March 27, 2023)
+
+  1. A bug was removed.
+
 [TOP](#top)
