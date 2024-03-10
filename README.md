@@ -214,6 +214,10 @@ There are some limitations for the batch request.
   });
   ```
 
+# Important
+
+- On 2024, it seems that the specification of the batch request for exporting files has been changed. In the current stage, when ["Method: files.export" of Drive API v3](https://developers.google.com/drive/api/reference/rest/v3/files/export) is used in the batch request, `HTTP/1.1 302 Found` is returned instead of the file content. So, I reported it to the Google issue tracker. [https://issuetracker.google.com/issues/328105509](https://issuetracker.google.com/issues/328105509) If you want to use it, please add a star. By this, I believe that it will help resolve the specification.
+
 ---
 
 <a name="licence"></a>
